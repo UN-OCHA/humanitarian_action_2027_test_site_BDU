@@ -186,6 +186,9 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .barbtn { display: block; padding: 6px 0; margin: -6px 0; border: 0; background: none; cursor: pointer; }
 .is-hidden-values .cellbar__top, .is-hidden-values .cellbar__total { display: none; }
 .table-scroll { overflow-x: auto; }
+/* Merged table columns follow the Figma grid: tablet 2 | 3 | 2 | 1 of 8, desktop 3 | 4 | 4 | 1 of 12 */
+.c-cl { width: 22.5%; } .c-p { width: 35.5%; } .c-f { width: 26%; } .c-r { width: 16%; }
+@media (min-width: 1024px) { .c-cl { width: 24%; } .c-p { width: 33.5%; } .c-f { width: 33.5%; } .c-r { width: 9%; } }
 
 /* Phone: accordion rows (both versions) */
 .acc { display: none; list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--cd-default-text-color); }
@@ -437,7 +440,7 @@ function mergedTable() {
   const m = isAdv() ? S.mcols : { p:true, f:true, r:true };
   const rows = CL.map((r, i) => `<tr data-row="${i}"><td><div class="cl">${icon(r[1])}<span>${esc(r[0])}</span></div></td>
     ${m.p ? `<td>${cellPeople(r, i)}</td>` : ''}${m.f ? `<td>${cellFunding(r, i)}</td>` : ''}${m.r ? `<td class="num">${reachedCell(r[4])}</td>` : ''}</tr>`).join('');
-  return `<table class="tbl${isAdv() && !S.showValues ? ' is-hidden-values' : ''}"><colgroup><col style="width:24%">${m.p ? '<col style="width:34%">' : ''}${m.f ? '<col style="width:26%">' : ''}${m.r ? '<col style="width:16%">' : ''}</colgroup>
+  return `<table class="tbl${isAdv() && !S.showValues ? ' is-hidden-values' : ''}"><colgroup><col class="c-cl">${m.p ? '<col class="c-p">' : ''}${m.f ? '<col class="c-f">' : ''}${m.r ? '<col class="c-r">' : ''}</colgroup>
     <thead><tr><th scope="col">Cluster</th>${m.p ? '<th scope="col">People in need and targeted</th>' : ''}${m.f ? '<th scope="col">Funding requirements and received</th>' : ''}${m.r ? '<th scope="col">People reached</th>' : ''}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function allColumnsTable() {
