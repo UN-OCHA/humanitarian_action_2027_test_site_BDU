@@ -180,7 +180,8 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .cellbar { display: flex; flex-direction: column; gap: var(--cd-space--3xs); }
 .cellbar__top { font-size: var(--cd-font-size--small); font-weight: 700; line-height: 1.4; }
 .cellbar__line { display: flex; align-items: center; gap: var(--cd-space--xs); }
-.cellbar__line .bar { flex: none; }
+.cellbar__line { --label-room: 5.5em; }
+.cellbar__line > .barbtn, .cellbar__line > .barwrap { flex: none; }
 .cellbar__total { font-size: var(--cd-font-size--small); line-height: 1.4; white-space: nowrap; }
 .barbtn { display: block; padding: 6px 0; margin: -6px 0; border: 0; background: none; cursor: pointer; }
 .is-hidden-values .cellbar__top, .is-hidden-values .cellbar__total { display: none; }
@@ -409,23 +410,27 @@ function keyFigures() {
     <div class="band kf-band"><div class="band__inner"><div class="grid kf-groups">${groups}</div>${adv ? '' : `<p class="kf-source kf-source--all">${KF_SOURCE_ALL}</p>`}</div></div>
     <div class="container"><p class="example-note">Example content: Sudan 2025 figures from the development site.</p></div></section>`;
 }
-function cellPeople(r, i) {
+// Bar length = share of the column maximum, measured on the line minus room for the end label,
+// so the longest bar never pushes its label into the next column (load-bearing: --label-room).
+const barW = f => `calc((100% - var(--label-room)) * ${Math.max(0.01, f).toFixed(4)})`;
+function barCell({ top, total, frac, part, tip, aria, i, plain }) {
+  const inner = `<div class="bar" style="width:100%"><div class="bar__part" style="width:${part}%"></div></div>`;
+  const el = isAdv() && !plain
+    ? `<button type="button" class="barbtn" style="width:${barW(frac)}" data-row="${i}" data-tip="${esc(tip)}" aria-label="${esc(aria)}">${inner}</button>`
+    : `<div class="barwrap" style="width:${barW(frac)}">${inner}</div>`;
+  return `<div class="cellbar"><span class="cellbar__top">${top}</span><div class="cellbar__line">${el}<span class="cellbar__total">${total}</span></div></div>`;
+}
+function cellPeople(r, i, plain) {
   const [name,, pin, tgt] = r;
   if (pin == null) return '–';
-  const w = Math.round(pin / MAX_P * 100), p = Math.round(tgt / pin * 100);
-  const bar = `<div class="bar" style="width:${w}%"><div class="bar__part" style="width:${p}%"></div></div>`;
-  const tip = `<b>${esc(name)}</b><b>Targeted: ${k(tgt)}</b>People in need: ${k(pin)}`;
-  const barEl = isAdv() ? `<button type="button" class="barbtn" style="width:${w}%" data-row="${i}" data-tip="${esc(tip)}" aria-label="${esc(name)}: targeted ${k(tgt)} of ${k(pin)} people in need"><div class="bar" style="width:100%"><div class="bar__part" style="width:${p}%"></div></div></button>` : bar;
-  return `<div class="cellbar"><span class="cellbar__top">${k(tgt)}</span><div class="cellbar__line" style="width:100%">${barEl}<span class="cellbar__total">${k(pin)}</span></div></div>`;
+  return barCell({ top: k(tgt), total: k(pin), frac: pin / MAX_P, part: Math.round(tgt / pin * 100),
+    tip: `<b>${esc(name)}</b><b>Targeted: ${k(tgt)}</b>People in need: ${k(pin)}`, aria: `${name}: targeted ${k(tgt)} of ${k(pin)} people in need`, i, plain });
 }
-function cellFunding(r, i) {
+function cellFunding(r, i, plain) {
   const [name,,,,, req, rec, pct] = r;
   if (req == null) return '–';
-  const w = Math.max(1, Math.round(req / MAX_F * 100));
-  const tip = `<b>${esc(name)}</b><b>Received: ${usd(rec)} · ${pct}%</b>Requirements: ${usd(req)}`;
-  const inner = `<div class="bar" style="width:100%"><div class="bar__part" style="width:${pct}%"></div></div>`;
-  const barEl = isAdv() ? `<button type="button" class="barbtn" style="width:${w}%" data-row="${i}" data-tip="${esc(tip)}" aria-label="${esc(name)}: received ${usd(rec)}, ${pct}% of ${usd(req)}">${inner}</button>` : `<div style="width:${w}%">${inner}</div>`;
-  return `<div class="cellbar"><span class="cellbar__top">${usd(rec)} · ${pct}%</span><div class="cellbar__line">${barEl}<span class="cellbar__total">${usd(req)}</span></div></div>`;
+  return barCell({ top: `${usd(rec)} · ${pct}%`, total: usd(req), frac: req / MAX_F, part: pct,
+    tip: `<b>${esc(name)}</b><b>Received: ${usd(rec)} · ${pct}%</b>Requirements: ${usd(req)}`, aria: `${name}: received ${usd(rec)}, ${pct}% of ${usd(req)}`, i, plain });
 }
 function reachedCell(v) { return v == null ? '–' : v === 'nd' ? 'No data' : `<b>${k(v)}</b>`; }
 function mergedTable() {
@@ -457,8 +462,8 @@ function accordion() {
     const open = S.open.has(i);
     return `<li class="acc__item${open ? ' is-open' : ''}"><button type="button" class="acc__btn" aria-expanded="${open}" aria-controls="acc-${i}" data-acc="${i}"><span class="cl">${icon(r[1])}<b>${esc(r[0])}</b></span>${icon(open ? 'Up' : 'Down', 'chev')}</button>
       <div class="acc__body" id="acc-${i}" ${open ? '' : 'hidden'}>
-        <div><div class="acc__label">People in need and targeted</div>${cellPeople(r, i).replace(/<button[^>]*>/, '<div style="width:' + Math.round((r[2]||0) / MAX_P * 100) + '%">').replace('</button>', '</div>')}</div>
-        <div><div class="acc__label">Funding requirements and received</div>${cellFunding(r, i).replace(/<button[^>]*>/, '<div style="width:' + Math.max(1, Math.round((r[5]||0) / MAX_F * 100)) + '%">').replace('</button>', '</div>')}</div>
+        <div><div class="acc__label">People in need and targeted</div>${cellPeople(r, i, true)}</div>
+        <div><div class="acc__label">Funding requirements and received</div>${cellFunding(r, i, true)}</div>
         <div class="small">Reached: ${reachedCell(r[4])}</div>
       </div></li>`; }).join('')}</ul>`;
 }
