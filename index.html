@@ -219,7 +219,6 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .notes__list { display: grid; grid-template-columns: 1fr; gap: var(--cd-space--md); }
 @media (min-width: 1024px) { .notes__list { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); } }
 .notes { border-top: 2px solid var(--cd-default-text-color); padding-top: var(--cd-space--md); }
-.no-notes .notes { display: none; }
 .foot { border-top: 1px solid var(--brand-grey--border); padding-block: var(--cd-space--md); font-size: var(--cd-font-size--small); color: var(--cd-grey--mid); }
 </style>
 
@@ -231,11 +230,6 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
       <a href="#progress" data-route="progress">Plan progress</a>
     </nav>
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-      <span class="proto-bar__label">Notes</span>
-      <div class="seg" role="group" aria-label="Design notes">
-        <button type="button" id="n-on" data-notes="on" aria-pressed="true">On</button>
-        <button type="button" id="n-off" data-notes="off" aria-pressed="false">Off</button>
-      </div>
       <span class="proto-bar__label">Version</span>
       <div class="seg" role="group" aria-label="Design version">
         <button type="button" id="v-simple" data-version="simple" aria-pressed="true">Simple</button>
@@ -365,7 +359,7 @@ function notes(keys) {
 
 /* ---------- State ---------- */
 const store = { get(k, d){ try { return localStorage.getItem(k) ?? d; } catch(e){ return d; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
-const S = { notes: store.get('ha-notes', 'on'), version: store.get('ha-version', 'simple'), view: 'merged', showValues: false, cols: { pin:true, tgt:true, rch:true, req:true, rec:true, pct:true }, mcols: { p:true, f:true, r:true }, open: new Set(), colsOpen: false };
+const S = { version: store.get('ha-version', 'simple'), view: 'merged', showValues: false, cols: { pin:true, tgt:true, rch:true, req:true, rec:true, pct:true }, mcols: { p:true, f:true, r:true }, open: new Set(), colsOpen: false };
 
 /* ---------- Helpers ---------- */
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -514,8 +508,6 @@ function render(keepScroll) {
   app.innerHTML = ({ home, overview, progress })[route()]();
   document.querySelectorAll('[data-route]').forEach(a => { if (a.dataset.route === route()) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   document.querySelectorAll('[data-version]').forEach(b => b.setAttribute('aria-pressed', b.dataset.version === S.version));
-  document.querySelectorAll('[data-notes]').forEach(b => b.setAttribute('aria-pressed', b.dataset.notes === S.notes));
-  document.body.classList.toggle('no-notes', S.notes === 'off');
   if (keepScroll) window.scrollTo(0, y);
 }
 let tipFor = null;
@@ -548,7 +540,6 @@ app.addEventListener('change', e => {
   if (e.target.dataset.col) { const c = { ...S.cols, [e.target.dataset.col]: e.target.checked }; if (Object.values(c).some(Boolean)) S.cols = c; render(true); document.getElementById('col-' + e.target.dataset.col)?.focus(); }
   if (e.target.dataset.mcol) { const c = { ...S.mcols, [e.target.dataset.mcol]: e.target.checked }; if (Object.values(c).some(Boolean)) S.mcols = c; render(true); document.getElementById('mcol-' + e.target.dataset.mcol)?.focus(); }
 });
-document.querySelectorAll('[data-notes]').forEach(b => b.addEventListener('click', () => { S.notes = b.dataset.notes; store.set('ha-notes', S.notes); render(true); }));
 document.querySelectorAll('[data-version]').forEach(b => b.addEventListener('click', () => { S.version = b.dataset.version; store.set('ha-version', S.version); render(true); }));
 window.addEventListener('hashchange', () => { render(false); window.scrollTo(0, 0); });
 let wasDesk = matchMedia('(min-width: 1024px)').matches;
