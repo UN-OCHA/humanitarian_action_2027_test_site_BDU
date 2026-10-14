@@ -29,22 +29,24 @@
   --cd-white: #FFFFFF;
   --cd-grey--900: #262626;
   /* Spacing */
-  --cd-space--3xs: 4px; --cd-space--2xs: 8px; --cd-space--xs: 12px; --cd-space--sm: 16px;
-  --cd-space--md: 24px; --cd-space--lg: 32px; --cd-space--xl: 48px; --cd-space--2xl: 64px;
+  /* Sizes in rem, as OCHA Common Design writes them (1rem = 16px); px in the comments */
+  --cd-space--3xs: 0.25rem; --cd-space--2xs: 0.5rem; --cd-space--xs: 0.75rem; --cd-space--sm: 1rem;   /* 4 8 12 16 */
+  --cd-space--md: 1.5rem; --cd-space--lg: 2rem; --cd-space--xl: 3rem; --cd-space--2xl: 4rem;          /* 24 32 48 64 */
   /* Type */
   --font: "Roboto", "Helvetica Neue", Arial, sans-serif;
-  --cd-font-size--small: 14px; --cd-font-size--default: 16px; --cd-font-size--base: 18px;
-  --type-h1: 30px; --type-h2: 24px; --type-h3: 22px; --type-key-figure: 26px;
+  --cd-font-size--small: 0.875rem; --cd-font-size--ref: 1rem; --cd-font-size--base: 1.125rem;  /* 14 16 18 */
+  --type-h1: 1.875rem; --type-h2: 1.5rem; --type-h3: 1.375rem; --type-key-figure: 1.625rem;     /* phone: 30 24 22 26 */
   /* Layout */
-  --gutter: 12px; --col-gap: 16px; --section-gap: var(--cd-space--lg); --max: 1400px;
+  --gutter: 0.75rem; --col-gap: var(--cd-space--sm); --section-gap: var(--cd-space--lg); --max: 1400px;
 }
-@media (min-width: 768px) { :root { --gutter: 24px; --col-gap: 24px; --section-gap: var(--cd-space--xl); --type-key-figure: 30px; } }
-@media (min-width: 1024px) { :root { --gutter: 40px; --type-h1: 38px; --type-h2: 30px; --type-h3: 26px; --type-key-figure: 38px; } }
+/* Breakpoints stay in px (screen widths), as in OCHA CD: 768px --cd-bp--md, 1024px --cd-bp--lg */
+@media (min-width: 768px) { :root { --gutter: 1.5rem; --col-gap: var(--cd-space--md); --section-gap: var(--cd-space--xl); --type-key-figure: 1.875rem; } }
+@media (min-width: 1024px) { :root { --gutter: 2.5rem; --type-h1: 2.375rem; --type-h2: 1.875rem; --type-h3: 1.625rem; --type-key-figure: 2.375rem; } }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; } /* load-bearing: .acc__body and .columns-panel set display, which would override the hidden attribute */
 html { background: var(--cd-white); }
-body { margin: 0; background: var(--cd-white); color: var(--cd-default-text-color); font-family: var(--font); font-size: var(--cd-font-size--default); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--cd-white); color: var(--cd-default-text-color); font-family: var(--font); font-size: var(--cd-font-size--ref); line-height: 1.5; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 h1, h2, h3 { margin: 0; font-weight: 700; text-wrap: balance; }
@@ -130,7 +132,7 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .kf-group__head svg { width: 32px; height: 32px; }
 .kf-list { display: flex; flex-direction: column; gap: var(--cd-space--md); margin: 0; }
 .kf-list--2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--cd-space--md); }
-.kf dt { font-size: var(--cd-font-size--default); }
+.kf dt { font-size: var(--cd-font-size--ref); }
 .kf dd { margin: 0; display: flex; flex-direction: column; gap: var(--cd-space--2xs); }
 .kf__value { display: inline-flex; align-items: center; gap: var(--cd-space--2xs); font-size: var(--type-key-figure); font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .kf__value--prioritized { color: var(--cd-red); }
@@ -165,7 +167,7 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .columns-panel label { min-height: 36px; }
 .columns-panel__title { font-size: var(--cd-font-size--small); font-weight: 700; text-transform: uppercase; margin: 0 0 var(--cd-space--2xs); }
 .columns-panel__group { font-size: var(--cd-font-size--small); font-weight: 700; margin: var(--cd-space--2xs) 0 0; }
-.tbl { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: var(--cd-font-size--default); }
+.tbl { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: var(--cd-font-size--ref); }
 .tbl th { text-align: left; font-size: var(--cd-font-size--small); font-weight: 700; text-transform: uppercase; line-height: 1.4; padding: 0 var(--cd-space--md) var(--cd-space--xs) 0; vertical-align: bottom; }
 .tbl thead tr:last-child th { border-bottom: 2px solid var(--cd-default-text-color); }
 .tbl td { padding: var(--cd-space--xs) var(--cd-space--md) var(--cd-space--xs) 0; border-bottom: 1px solid var(--brand-grey--border); vertical-align: middle; }
