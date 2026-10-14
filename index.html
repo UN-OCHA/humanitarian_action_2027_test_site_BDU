@@ -188,6 +188,19 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .barbtn { display: block; padding: 6px 0; margin: -6px 0; border: 0; background: none; cursor: pointer; }
 .is-hidden-values .cellbar__top, .is-hidden-values .cellbar__total { display: none; }
 .table-scroll { overflow-x: auto; }
+.c-all-cl { width: 24%; }
+.figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--cd-space--sm); margin-top: var(--cd-space--2xs); }
+.fig { display: flex; flex-direction: column; gap: var(--cd-space--3xs); }
+.fig__label { font-size: var(--cd-font-size--small); line-height: 1.4; }
+.fig__value { display: flex; flex-direction: column; gap: var(--cd-space--3xs); }
+/* Tablet: the same All columns table, tighter; % funded as a number; Cluster column stays put if the figures scroll */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .tbl--all { table-layout: auto; }
+  .c-all-cl { width: 150px; }
+  .tbl--all th, .tbl--all td { padding-right: var(--cd-space--sm); }
+  .tbl--all .bar-row .bar { display: none; }
+  .tbl--all th:first-child, .tbl--all td:first-child { position: sticky; left: 0; background: var(--cd-white); z-index: 1; }
+}
 /* Merged table columns follow the Figma grid: tablet 2 | 3 | 2 | 1 of 8, desktop 3 | 4 | 4 | 1 of 12 */
 .c-cl { width: 22.5%; } .c-p { width: 35.5%; } .c-f { width: 26%; } .c-r { width: 16%; }
 @media (min-width: 1024px) { .c-cl { width: 24%; } .c-p { width: 33.5%; } .c-f { width: 33.5%; } .c-r { width: 9%; } }
@@ -339,7 +352,7 @@ const NOTES = {
   table: { ticket:'HPC-10606', title:'Wide tables',
     what:'The cluster table with people and funding figures. Related figures are merged into one column each, so the table fits without scrolling.',
     simple:['4 columns instead of 6 or 7, each cluster with its humanitarian icon. People: targeted (dark part) inside people in need (whole bar). Funding: funded inside requirements, with the %. People reached: the number.'],
-    advanced:['Options: switch between the merged view and all columns (desktop only), show or hide the values (hidden: values appear on hover or tap), and choose the columns.'],
+    advanced:['One column per figure (All columns), so it works with any set of columns the admin picks. Desktop can still switch to the merged view to compare. Tablet: the same table, % funded as a number. Phone: each cluster opens to list its figures. Choose the columns with Columns.'],
     both:['Phone: each cluster is an accordion, closed by default.','Achieved values (targeted, funding received) in bold. Values rounded with k and M. A dash when the plan has no figure, “No data” when the figure is not reported yet.'],
     compare:[['Sudan clusters overview (live)','https://humanitarianaction.info/plan/1220'],['CAR combined table (demo)','https://demo.humanitarianaction-info.ahconu.org/plan/1256']] },
   docs: { ticket:'HPC-10630', title:'Documents and links',
@@ -458,23 +471,33 @@ function allColumnsTable() {
     const pc = r[7] == null ? '–' : `<div class="bar-row"><div class="bar" style="flex:none;width:80px"><div class="bar__part" style="width:${r[7]}%"></div></div><b>${r[7]}%</b></div>`;
     return `<tr><td><div class="cl">${icon(r[1])}<span>${esc(r[0])}</span></div></td>${cells}${c.pct ? `<td class="num">${pc}</td>` : ''}</tr>`;
   }).join('');
-  return `<table class="tbl"><colgroup><col style="width:24%"></colgroup><thead>
+  return `<table class="tbl tbl--all"><colgroup><col class="c-all-cl"></colgroup><thead>
     <tr class="grp"><th></th>${P.length ? `<th colspan="${P.length}" scope="colgroup"><span>People</span></th>` : ''}${F.length + (c.pct ? 1 : 0) ? `<th colspan="${F.length + (c.pct ? 1 : 0)}" scope="colgroup"><span>Funding</span></th>` : ''}</tr>
     <tr><th scope="col">Cluster</th>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+// Advanced, phone: the figures the admin chose, listed under People and Funding (works with any set of columns)
+function figureList(r) {
+  const c = S.cols;
+  const fig = (label, v, bold, money) => { const txt = money ? usd(v) : k(v); const empty = v == null || v === 'nd'; return `<div class="fig"><span class="fig__label">${label}</span><span class="fig__value">${!empty && bold ? `<b>${txt}</b>` : txt}</span></div>`; };
+  const P = [c.pin && fig('In need', r[2], false), c.tgt && fig('Targeted', r[3], true), c.rch && fig('Reached', r[4], true)].filter(Boolean);
+  const pct = r[7] == null ? '–' : `<b>${r[7]}%</b><div class="bar" style="width:64px"><div class="bar__part" style="width:${r[7]}%"></div></div>`;
+  const F = [c.req && fig('Required', r[5], false, true), c.rec && fig('Received', r[6], true, true), c.pct && `<div class="fig"><span class="fig__label">% funded</span><span class="fig__value">${pct}</span></div>`].filter(Boolean);
+  return `${P.length ? `<div><div class="acc__label">People</div><div class="figs">${P.join('')}</div></div>` : ''}${F.length ? `<div><div class="acc__label">Funding</div><div class="figs">${F.join('')}</div></div>` : ''}`;
 }
 function accordion() {
   return `<ul class="acc">${CL.map((r, i) => {
     const open = S.open.has(i);
     return `<li class="acc__item${open ? ' is-open' : ''}"><button type="button" class="acc__btn" aria-expanded="${open}" aria-controls="acc-${i}" data-acc="${i}"><span class="cl">${icon(r[1])}<b>${esc(r[0])}</b></span>${icon(open ? 'Up' : 'Down', 'chev')}</button>
       <div class="acc__body" id="acc-${i}" ${open ? '' : 'hidden'}>
-        <div><div class="acc__label">People in need and targeted</div>${cellPeople(r, i, true)}</div>
+        ${isAdv() ? figureList(r) : `<div><div class="acc__label">People in need and targeted</div>${cellPeople(r, i, true)}</div>
         <div><div class="acc__label">Funding requirements and received</div>${cellFunding(r, i, true)}</div>
-        <div class="small">Reached: ${reachedCell(r[4])}</div>
+        <div class="small">Reached: ${reachedCell(r[4])}</div>`}
       </div></li>`; }).join('')}</ul>`;
 }
 function clusterTable() {
   const adv = isAdv();
-  const allCols = adv && S.view === 'all' && window.matchMedia('(min-width: 1024px)').matches;
+  // Advanced: All columns is the layout below 1024px; desktop keeps the Merged / All columns switch
+  const allCols = adv && (S.view === 'all' || !window.matchMedia('(min-width: 1024px)').matches);
   const colBox = (id, label) => `<label><input type="checkbox" id="col-${id}" data-col="${id}" ${S.cols[id] ? 'checked' : ''}>${label}</label>`;
   const mBox = (id, label) => `<label><input type="checkbox" id="mcol-${id}" data-mcol="${id}" ${S.mcols[id] ? 'checked' : ''}>${label}</label>`;
   const panelBody = allCols
