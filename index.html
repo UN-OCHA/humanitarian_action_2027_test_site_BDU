@@ -173,8 +173,8 @@ main { display: flex; flex-direction: column; gap: var(--section-gap); padding-b
 .tbl td { padding: var(--cd-space--xs) var(--cd-space--md) var(--cd-space--xs) 0; border-bottom: 1px solid var(--brand-grey--border); vertical-align: middle; }
 .tbl th:last-child, .tbl td:last-child { padding-right: 0; }
 .tbl tr.is-hl td { background: var(--brand-grey); }
-.tbl .grp th { padding-bottom: var(--cd-space--2xs); }
-.tbl .grp th[colspan] span { display: block; border-bottom: 1px solid var(--brand-grey--border); padding-bottom: var(--cd-space--2xs); }
+.tbl .grp th { padding-bottom: 0; line-height: 1.2; }
+.tbl .grp th[colspan] span { display: block; } /* no rule under the group word: it reads as one label with the header below (“People in need”) */
 .cl { display: flex; align-items: center; gap: var(--cd-space--xs); }
 .cl svg { width: 24px; height: 24px; flex: none; }
 .num { font-variant-numeric: tabular-nums; font-size: var(--cd-font-size--small); }
