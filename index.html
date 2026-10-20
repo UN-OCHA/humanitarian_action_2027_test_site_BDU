@@ -285,39 +285,37 @@ const DEF = {
   'People targeted': 'People the humanitarian plan aims to assist.',
   'People urgently prioritized': 'People with the most urgent needs, assisted first.',
   'People reached': 'People who received at least one form of assistance.',
+  'Prioritized people reached': 'Prioritized people who received at least one form of assistance.',
   'Prioritized requirements ($)': 'Funding needed for the most urgent activities.',
 };
 const KF = [
   { name:'People', icon:'People-in-need', figs:[['People in need','30.4 million'],['People targeted','20.9 million'],['People urgently prioritized','18.0 million',true]],
     source:'Source: Humanitarian Needs and Response Plan (HNRP), planning figures · 31 Dec 2024' },
-  { name:'Progress', icon:'People-reached', figs:[['People reached','17.1 million',false,81.6],['People reached %','81.6%',false,null,'simpleOnly']],
+  { name:'Progress', icon:'People-reached', figs:[['People reached','17.1 million',false,81.6],['Prioritized people reached','14.2 million',true],['People reached %','81.6%',false,null,'simpleOnly']],
     source:'Source: monitoring figures · updated 17 Jan 2026' },
   { name:'Funding', icon:'Financing', figs:[['Requirements ($)','$4.16 billion',false,40],['Prioritized requirements ($)','$3.0 billion',true],['% Funded','40%',false,null,'simpleOnly']],
     source:'Source: Financial Tracking Service (FTS) · updated 14 Nov 2025' },
-  { name:'Presence', icon:'Partnership', grid:true, figs:[['Clusters','13'],['States','18'],['Locations','166'],['Organizations','99']],
+  { name:'Presence', icon:'Partnership', grid:true, figs:[['Clusters','13'],['Organizations','99'],['States','18'],['Locations','166']],
     source:'Source: [source] · updated [date]' },
 ];
 const KF_SOURCE_ALL = 'Data sources: Financial data sourced from the Financial Tracking Service (FTS); population and planning figures derived from the Humanitarian Needs and Response Plan (HNRP) consolidated by OCHA based on cluster inputs | Updated dates: Financial data: 14 Nov 2025 | Planning figures: 31 Dec 2024 | Monitoring figures: 17 Jan 2026';
 
-// Cluster overview, CAR 2025 (demo site). [name, icon, PiN, targeted, reached, required, received, %]
 // "–" = no figure; "No data" = not reported. Numbers in units for bar scaling.
+// Cluster overview, CAR 2025 (demo site), Protection at global cluster level.
+// [name, icon, PiN, targeted, reached, required, received, %, prioritized targeted*, prioritized required*]  (* dummy values for the example)
 const CL = [
- ['ABRIS&NFI','Shelter',401e3,292e3,65e3,27e6,3.7e6,14],
- ['CCCM','Camp-coordination-and-camp-management',707e3,406e3,109e3,5.7e6,344e3,6],
- ['Coordination','Coordination',null,null,null,13.5e6,5.6e6,41],
- ['Eau, hygiène et assainissement','Water-sanitation-and-hygiene',1.6e6,845e3,98e3,21.7e6,13.8e6,64],
- ['Education','Education',844e3,343e3,12e3,20e6,7.6e6,38],
- ['Logistique','Logistics',null,null,null,20.3e6,4.5e6,22],
- ['Nutrition','Nutrition',775e3,525e3,21e3,20.5e6,4.5e6,22],
- ['Protection','Protection',null,null,null,29.6e6,20.2e6,68],
- ['Protection Générale','Protection',1.3e6,856e3,94e3,null,null,null],
- ['Protection de l’enfant','Child-protection',590e3,276e3,13e3,null,null,null],
- ['Violence Basée sur le Genre (VBG)','Gender-based-violence',910e3,622e3,40e3,null,null,null],
- ['Lutte Antimines','Mine',516e3,164e3,'nd',null,null,null],
- ['Réponse aux réfugiés','Refugee',72e3,62e3,'nd',29.4e6,8e6,27],
- ['Santé','Health',1.5e6,666e3,90e3,26.4e6,13.1e6,50],
- ['Sécurité alimentaire','Food-security',1.8e6,1.2e6,121e3,111e6,28.1e6,25],
- ['Transfert d’espèces à usages multiples','Cash-transfer',34e3,34e3,'nd',900e3,31e3,3],
+ ['ABRIS&NFI','Shelter',401e3,292e3,65e3,27e6,3.7e6,14,204e3,16.2e6],
+ ['CCCM','Camp-coordination-and-camp-management',707e3,406e3,109e3,5.7e6,344e3,6,284e3,3.4e6],
+ ['Coordination','Coordination',null,null,null,13.5e6,5.6e6,41,null,8.1e6],
+ ['Eau, hygiène et assainissement','Water-sanitation-and-hygiene',1.6e6,845e3,98e3,21.7e6,13.8e6,64,592e3,13e6],
+ ['Education','Education',844e3,343e3,12e3,20e6,7.6e6,38,240e3,12e6],
+ ['Logistique','Logistics',null,null,null,20.3e6,4.5e6,22,null,12.2e6],
+ ['Nutrition','Nutrition',775e3,525e3,21e3,20.5e6,4.5e6,22,368e3,12.3e6],
+ ['Protection','Protection',1.3e6,856e3,94e3,29.6e6,20.2e6,68,599e3,17.8e6],
+ ['Réponse aux réfugiés','Refugee',72e3,62e3,'nd',29.4e6,8e6,27,43e3,17.6e6],
+ ['Santé','Health',1.5e6,666e3,90e3,26.4e6,13.1e6,50,466e3,15.8e6],
+ ['Sécurité alimentaire','Food-security',1.8e6,1.2e6,121e3,111e6,28.1e6,25,840e3,66.6e6],
+ ['Transfert d’espèces à usages multiples','Cash-transfer',34e3,34e3,'nd',900e3,31e3,3,24e3,540e3],
 ];
 const DOCS_PROGRESS = [
  ['Afghanistan Humanitarian Response Plan Response Overview 2025','26 August 2025','Online dynamic','English','OCHA Afghanistan','Covers January 2025 - date','afghanistan_report_1.png'],
@@ -338,10 +336,10 @@ const DOCS_RELATED = [
 const JIRA = id => `https://humanitarian.atlassian.net/browse/${id}`;
 const NOTES = {
   hero: { ticket:'HPC-10626', title:'Homepage hero',
-    what:'Replaces the homepage carousel with three fixed elements: the GHO feature, the latest updates and a Donate box.',
-    simple:['Full-width photo (5:2) with the light yellow text panel below, as in the current carousel; the latest updates beside a Donate box.'],
-    advanced:['Title, description and button beside the photo, on a full-width light yellow band; the latest updates and Donate below; heart icon on the Donate button.'],
-    both:['The four most recent updates, newest first, in two columns (one on phone), each with a 140 × 85 thumbnail, date and title.','Donate: grey box with a title, one sentence and a secondary (outline) button.','The Operations block below the hero is unchanged.'],
+    what:'Replaces the homepage carousel with three fixed elements: the main news, the featured items and a Donate box.',
+    simple:['Full-width photo (5:2) with the light yellow text panel below, as in the current carousel; the featured items beside a Donate box.'],
+    advanced:['Title, description and button beside the photo, on a full-width light yellow band; the featured items and Donate below; heart icon on the Donate button.'],
+    both:['Four featured items chosen by editors (not always the latest: e.g. the GHO in November), in two columns (one on phone), each with a 140 × 85 thumbnail, date and title.','Donate: grey box with a title, one sentence and a secondary (outline) button.','The Operations block below the hero is unchanged.'],
     compare:[['live homepage','https://humanitarianaction.info/'],['dev homepage','https://dev.humanitarianaction-info.ahconu.org/']] },
   kf: { ticket:'HPC-10625', title:'Key figures',
     what:'Key figures of an operation page, grouped by purpose (People, Progress, Funding, Presence) on one page, without tabs. Groups side by side on desktop from 1200px, in a 2 × 2 grid on tablet and on small desktops (1024–1199px), stacked on phone.',
@@ -350,10 +348,10 @@ const NOTES = {
     both:['A figure without data, such as prioritized figures before the data is available, is not shown.'],
     compare:[['Sudan operation page','https://humanitarianaction.info/plan/1220'],['homepage, Operations block','https://humanitarianaction.info/'],['dev Sudan page','https://dev.humanitarianaction-info.ahconu.org/plan/1220']] },
   table: { ticket:'HPC-10606', title:'Wide tables',
-    what:'The cluster table with people and funding figures. Related figures are merged into one column each, so the table fits without scrolling.',
-    simple:['4 columns instead of 6 or 7, each cluster with its humanitarian icon. People: targeted (dark part) inside people in need (whole bar). Funding: funded inside requirements, with the %. People reached: the number.'],
-    advanced:['One column per figure (All columns), so it works with any set of columns the admin picks. Desktop can still switch to the merged view to compare. Tablet: the same table, % funded as a number. Phone: each cluster opens to list its figures. Choose the columns with Columns.'],
-    both:['Phone: each cluster is an accordion, closed by default.','Achieved values (targeted, funding received) in bold. Values rounded with k and M. A dash when the plan has no figure, “No data” when the figure is not reported yet.'],
+    what:'The cluster table with people and funding figures: one column per figure, in any set and order the admin chooses. One version for Simple and Advanced.',
+    simple:['Columns grouped under People and Funding; values rounded with k and M so it fits without scrolling on desktop.'],
+    advanced:['Columns grouped under People and Funding; values rounded with k and M so it fits without scrolling on desktop.'],
+    both:['Tablet: the same table; if the columns don’t fit, the Cluster column stays fixed and the figures scroll. Phone: each cluster is an accordion, closed by default, listing its figures. Readers can show or hide columns with Columns.','Achieved values (targeted, funding received) in bold. Values rounded with k and M. A dash when the plan has no figure, “No data” when the figure is not reported yet.'],
     compare:[['Sudan clusters overview (live)','https://humanitarianaction.info/plan/1220'],['CAR combined table (demo)','https://demo.humanitarianaction-info.ahconu.org/plan/1256']] },
   docs: { ticket:'HPC-10630', title:'Documents and links',
     what:'Documents and links become a compact list: 3 columns on desktop, 2 on tablet and 1 on phone, with no box and no button.',
@@ -378,7 +376,7 @@ function notes(keys) {
 
 /* ---------- State ---------- */
 const store = { get(k, d){ try { return localStorage.getItem(k) ?? d; } catch(e){ return d; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
-const S = { version: store.get('ha-version', 'simple'), view: 'merged', showValues: false, cols: { pin:true, tgt:true, rch:true, req:true, rec:true, pct:true }, mcols: { p:true, f:true, r:true }, open: new Set(), colsOpen: false };
+const S = { version: store.get('ha-version', 'simple'), view: 'merged', showValues: false, cols: { pin:true, tgt:true, ptg:true, rch:true, req:true, prq:true, rec:true, pct:true }, mcols: { p:true, f:true, r:true }, open: new Set(), colsOpen: false };
 
 /* ---------- Helpers ---------- */
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -394,7 +392,7 @@ const isAdv = () => S.version === 'advanced';
 
 /* ---------- Homepage ---------- */
 function updates() {
-  return `<div class="updates section"><h2 class="h2">Latest updates</h2><ul class="updates__list">${HERO.updates.map(([d,t,img]) =>
+  return `<div class="updates section"><h2 class="h2">Featured</h2><ul class="updates__list">${HERO.updates.map(([d,t,img]) =>
     `<li class="update"><img src="${img}" alt="" width="140" height="85" loading="lazy"><div><p class="update__date">${d}</p><a class="update__title" href="#home">${esc(t)}</a></div></li>`).join('')}</ul></div>`;
 }
 function donate() {
@@ -422,11 +420,11 @@ function keyFigures() {
       const bar = adv && pct != null ? `<div class="bar-row"><div class="bar" role="img" aria-label="${pct}%"><div class="bar__part" style="width:${pct}%"></div></div><b>${pct}%</b></div>` : '';
       return `<div class="kf"><dt>${label}</dt><dd><span class="kf__value${prio ? ' kf__value--prioritized' : ''}">${value}${info}</span>${bar}</dd></div>`;
     }).join('');
-    return `<section class="kf-group" aria-labelledby="kf-${g.name}"><h3 class="kf-group__head" id="kf-${g.name}">${adv ? icon(g.icon) : ''}${g.name}</h3><dl class="kf-list${g.grid ? ' kf-list--2x2' : ''}">${figs}</dl>${adv ? `<p class="kf-source">${g.source}</p>` : ''}</section>`;
+    return `<section class="kf-group" aria-labelledby="kf-${g.name}"><h3 class="kf-group__head" id="kf-${g.name}">${adv ? icon(g.icon) : ''}${g.name}</h3><dl class="kf-list${g.grid && adv ? ' kf-list--2x2' : ''}">${figs}</dl>${adv ? `<p class="kf-source">${g.source}</p>` : ''}</section>`;
   }).join('');
   return `<section class="section" aria-labelledby="kf-h"><div class="container"><h2 class="h2" id="kf-h">Key figures</h2></div>
     <div class="band kf-band"><div class="band__inner"><div class="grid kf-groups">${groups}</div>${adv ? '' : `<p class="kf-source kf-source--all">${KF_SOURCE_ALL}</p>`}</div></div>
-    <div class="container"><p class="example-note">Example content: Sudan 2025 figures from the development site.</p></div></section>`;
+    <div class="container"><p class="example-note">Example content: Sudan 2025 figures from the development site; prioritized people reached is a sample value.</p></div></section>`;
 }
 // Bar length = share of the column maximum, measured on the line minus room for the end label,
 // so the longest bar never pushes its label into the next column (load-bearing: --label-room).
@@ -460,8 +458,8 @@ function mergedTable() {
 }
 function allColumnsTable() {
   const c = S.cols;
-  const P = [['pin','In need',2,false],['tgt','Targeted',3,true],['rch','Reached',4,true]].filter(x => c[x[0]]);
-  const F = [['req','Required',5,false],['rec','Received',6,true]].filter(x => c[x[0]]);
+  const P = [['pin','In need',2,false],['tgt','Targeted',3,true],['ptg','Prioritized',8,false],['rch','Reached',4,true]].filter(x => c[x[0]]);
+  const F = [['req','Required',5,false],['prq','Prioritized',9,false],['rec','Received',6,true]].filter(x => c[x[0]]);
   const head2 = [...P, ...F].map(x => `<th scope="col">${x[1]}</th>`).join('') + (c.pct ? '<th scope="col">% funded</th>' : '');
   const rows = CL.map(r => {
     const cells = [...P.map(x => [x, false]), ...F.map(x => [x, true])].map(([x, money]) => {
@@ -479,9 +477,9 @@ function allColumnsTable() {
 function figureList(r) {
   const c = S.cols;
   const fig = (label, v, bold, money) => { const txt = money ? usd(v) : k(v); const empty = v == null || v === 'nd'; return `<div class="fig"><span class="fig__label">${label}</span><span class="fig__value">${!empty && bold ? `<b>${txt}</b>` : txt}</span></div>`; };
-  const P = [c.pin && fig('In need', r[2], false), c.tgt && fig('Targeted', r[3], true), c.rch && fig('Reached', r[4], true)].filter(Boolean);
+  const P = [c.pin && fig('In need', r[2], false), c.tgt && fig('Targeted', r[3], true), c.ptg && fig('Prioritized', r[8], false), c.rch && fig('Reached', r[4], true)].filter(Boolean);
   const pct = r[7] == null ? '–' : `<b>${r[7]}%</b><div class="bar" style="width:64px"><div class="bar__part" style="width:${r[7]}%"></div></div>`;
-  const F = [c.req && fig('Required', r[5], false, true), c.rec && fig('Received', r[6], true, true), c.pct && `<div class="fig"><span class="fig__label">% funded</span><span class="fig__value">${pct}</span></div>`].filter(Boolean);
+  const F = [c.req && fig('Required', r[5], false, true), c.prq && fig('Prioritized', r[9], false, true), c.rec && fig('Received', r[6], true, true), c.pct && `<div class="fig"><span class="fig__label">% funded</span><span class="fig__value">${pct}</span></div>`].filter(Boolean);
   return `${P.length ? `<div><div class="acc__label">People</div><div class="figs">${P.join('')}</div></div>` : ''}${F.length ? `<div><div class="acc__label">Funding</div><div class="figs">${F.join('')}</div></div>` : ''}`;
 }
 function accordion() {
@@ -489,33 +487,30 @@ function accordion() {
     const open = S.open.has(i);
     return `<li class="acc__item${open ? ' is-open' : ''}"><button type="button" class="acc__btn" aria-expanded="${open}" aria-controls="acc-${i}" data-acc="${i}"><span class="cl">${icon(r[1])}<b>${esc(r[0])}</b></span>${icon(open ? 'Up' : 'Down', 'chev')}</button>
       <div class="acc__body" id="acc-${i}" ${open ? '' : 'hidden'}>
-        ${isAdv() ? figureList(r) : `<div><div class="acc__label">People in need and targeted</div>${cellPeople(r, i, true)}</div>
+        ${true ? figureList(r) : `<div><div class="acc__label">People in need and targeted</div>${cellPeople(r, i, true)}</div>
         <div><div class="acc__label">Funding requirements and received</div>${cellFunding(r, i, true)}</div>
         <div class="small">Reached: ${reachedCell(r[4])}</div>`}
       </div></li>`; }).join('')}</ul>`;
 }
 function clusterTable() {
   const adv = isAdv();
-  // Advanced: All columns is the layout below 1024px; desktop keeps the Merged / All columns switch
-  const allCols = adv && (S.view === 'all' || !window.matchMedia('(min-width: 1024px)').matches);
+  // One version for both Simple and Advanced: one column per figure (stakeholder decision, October 2026)
+  const allCols = true;
   const colBox = (id, label) => `<label><input type="checkbox" id="col-${id}" data-col="${id}" ${S.cols[id] ? 'checked' : ''}>${label}</label>`;
   const mBox = (id, label) => `<label><input type="checkbox" id="mcol-${id}" data-mcol="${id}" ${S.mcols[id] ? 'checked' : ''}>${label}</label>`;
   const panelBody = allCols
-    ? `<p class="columns-panel__group">People</p>${colBox('pin','In need')}${colBox('tgt','Targeted')}${colBox('rch','Reached')}<p class="columns-panel__group">Funding</p>${colBox('req','Required')}${colBox('rec','Received')}${colBox('pct','% funded')}`
+    ? `<p class="columns-panel__group">People</p>${colBox('pin','In need')}${colBox('tgt','Targeted')}${colBox('ptg','Prioritized')}${colBox('rch','Reached')}<p class="columns-panel__group">Funding</p>${colBox('req','Required')}${colBox('prq','Prioritized')}${colBox('rec','Received')}${colBox('pct','% funded')}`
     : `${mBox('p','People in need and targeted')}${mBox('f','Funding requirements and received')}${mBox('r','People reached')}`;
-  const toolbar = adv ? `<div class="toolbar">
-      <div class="toolbar__group view-switch" role="group" aria-label="View"><span class="small">View:</span>
-        <button type="button" class="cd-button ${S.view === 'merged' ? '' : 'cd-button--outline'}" data-view="merged" aria-pressed="${S.view === 'merged'}">Merged</button>
-        <button type="button" class="cd-button ${S.view === 'all' ? '' : 'cd-button--outline'}" data-view="all" aria-pressed="${S.view === 'all'}">All columns</button></div>
-      <div class="toolbar__group">${allCols ? '' : `<label><input type="checkbox" id="show-values" ${S.showValues ? 'checked' : ''}>Show values</label>`}
-        ${adv ? `<div class="columns-wrap"><button type="button" class="cd-button cd-button--outline" id="cols-btn" aria-expanded="${S.colsOpen}" aria-controls="cols-panel">${icon('Filter')}<span>Columns</span></button>
+  const toolbar = `<div class="toolbar">
+      <div class="toolbar__group">
+        ${true ? `<div class="columns-wrap"><button type="button" class="cd-button cd-button--outline" id="cols-btn" aria-expanded="${S.colsOpen}" aria-controls="cols-panel">${icon('Filter')}<span>Columns</span></button>
           <div class="columns-panel" id="cols-panel" ${S.colsOpen ? '' : 'hidden'}><p class="columns-panel__title">Show columns</p>${panelBody}</div></div>` : ''}</div>
-    </div>` : '';
+    </div>`;
   const phoneValues = adv && !S.showValues ? ' is-hidden-values' : '';
   return `<section class="container section" aria-labelledby="cl-h"><h2 class="h2" id="cl-h">Cluster overview</h2>${toolbar}
     <div class="tbl-wrap table-scroll">${allCols ? allColumnsTable() : mergedTable()}</div>
     <div class="acc-wrap">${accordion()}</div>
-    <p class="example-note">Example content: Central African Republic 2025 figures from the demo site.</p></section>`;
+    <p class="example-note">Example content: Central African Republic 2025 figures from the demo site, Protection at global cluster level. Prioritized figures are sample values.</p></section>`;
 }
 function docList(items, adv) {
   return `<ul class="docs">${items.map(([t, d, fmt, lang, prod, cov, img]) => {
