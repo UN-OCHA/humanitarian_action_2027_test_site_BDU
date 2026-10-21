@@ -334,7 +334,7 @@ const DOCS_PROGRESS = [
  ['Afghanistan: Humanitarian Needs and Response Plan 2025, Response Overview (1 January - 31 January 2025)','1 May 2025','PDF','English','OCHA Afghanistan','Covers January 2025','afghanistan_report_8.png'],
 ];
 // Items shown without an image in Advanced, to compare the two no-image options
-const NOIMG = { progress: [2, 5], related: [1] };
+const NOIMG = { progress: [1, 4], related: [1] };
 const DOCS_RELATED = [
  ['GHO Article','4 December 2024',null,null,null,null,'sudan_document_1.png'],
  ['Humanitarian Needs and Response Plan Sudan 2025 - Executive Summary','31 December 2024',null,null,null,null,'sudan_document_2.png'],
@@ -540,7 +540,7 @@ function overview() {
     <section class="container section ${isAdv() ? 'is-adv' : ''}" aria-labelledby="rd-h">${docsHead('rd-h', 'Related documents')}${docList(DOCS_RELATED, isAdv(), NOIMG.related)}<p class="example-note">Example content: Sudan, live site.${noImgNote('The second item is')}</p></section>${notes(['kf','table','docs'])}`;
 }
 function progress() {
-  return `${planHead('Plan progress')}<section class="container section ${isAdv() ? 'is-adv' : ''}" aria-labelledby="pr-h">${docsHead('pr-h', 'Progress reports')}${docList(DOCS_PROGRESS, isAdv(), NOIMG.progress)}<p class="example-note">Example content: Afghanistan, live site.${noImgNote('The third and sixth items are')}</p></section>${notes(['docs'])}`;
+  return `${planHead('Plan progress')}<section class="container section ${isAdv() ? 'is-adv' : ''}" aria-labelledby="pr-h">${docsHead('pr-h', 'Progress reports')}${docList(DOCS_PROGRESS, isAdv(), NOIMG.progress)}<p class="example-note">Example content: Afghanistan, live site.${noImgNote('The second and fifth items are')}</p></section>${notes(['docs'])}`;
 }
 
 /* ---------- Render + events ---------- */
